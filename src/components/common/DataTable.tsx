@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { Space, Table, Drawer } from "antd";
 import type { TableProps } from "antd";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import DataTable from "../common/DataTable";
+import { Space, Table, Tag, Drawer } from "antd";
 
 interface DataType {
   key: string;
@@ -11,28 +10,8 @@ interface DataType {
   address: string;
 }
 
-const data: DataType[] = [
-  {
-    key: "1",
-    name: "John Brown",
-    contact: 11234689,
-    address: "New York No. 1 Lake Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    contact: 11234689,
-    address: "London No. 1 Lake Park",
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    contact: 11234689,
-    address: "Sydney No. 1 Lake Park",
-  },
-];
-
-const Members = () => {
+const DataTable = (props: any) => {
+  const { data } = props;
   const [open, setOpen] = useState(false);
 
   const showDrawer = () => {
@@ -42,6 +21,7 @@ const Members = () => {
   const onClose = () => {
     setOpen(false);
   };
+
   const columns: TableProps<DataType>["columns"] = [
     {
       title: "Name",
@@ -77,22 +57,7 @@ const Members = () => {
       ),
     },
   ];
-
-  return (
-    <>
-      <DataTable data={data} />
-      <Drawer
-        title="Basic Drawer"
-        placement="right"
-        closable={false}
-        onClose={onClose}
-        open={open}
-        getContainer={false}
-      >
-        <p>Some contents...</p>
-      </Drawer>
-    </>
-  );
+  return <Table columns={columns} dataSource={data} />;
 };
 
-export default Members;
+export default DataTable;

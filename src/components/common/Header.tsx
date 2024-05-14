@@ -48,9 +48,8 @@ const HeaderNav: React.FC = () => {
 
   const onClick = (e: any) => {
     setCurrent(e.key);
-    const selectedItem = items.find((item: any) => item.key === e.key);
+    const selectedItem = items?.find((item: any) => item.key === e.key);
     if (selectedItem) {
-      console.log("Path:", selectedItem.path);
       navigate(selectedItem.path);
     }
   };
