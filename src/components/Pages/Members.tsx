@@ -1,15 +1,9 @@
 import React, { useState } from "react";
-import { Space, Table, Drawer } from "antd";
+import { Drawer, Button, Row, Col, Space } from "antd";
+import DataTable from "../common/DataTable";
+import { DataType } from "../../types/global";
 import type { TableProps } from "antd";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import DataTable from "../common/DataTable";
-
-interface DataType {
-  key: string;
-  name: string;
-  contact: number;
-  address: string;
-}
 
 const data: DataType[] = [
   {
@@ -42,17 +36,18 @@ const Members = () => {
   const onClose = () => {
     setOpen(false);
   };
+
   const columns: TableProps<DataType>["columns"] = [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (text) => <a>{text}</a>,
+      render: (text) => <span>{text}</span>,
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
+      title: "Contact",
+      dataIndex: "contact",
+      key: "contact",
     },
     {
       title: "Address",
@@ -80,7 +75,13 @@ const Members = () => {
 
   return (
     <>
-      <DataTable data={data} />
+      <Row justify="end" style={{ padding: "20px" }}>
+        <Col>
+          <Button type="primary">Add Member</Button>
+        </Col>
+      </Row>
+
+      <DataTable data={data} columns={columns} />
       <Drawer
         title="Basic Drawer"
         placement="right"
