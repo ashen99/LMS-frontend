@@ -69,7 +69,7 @@ export const {
   bookListFetchFail,
 } = bookSlice.actions;
 
-export const saveBook = (payload: any) => {
+export const saveBook = (payload: BookDataType) => {
   return async (dispatch: Dispatch) => {
     try {
       const response = await BookService.saveBook(payload);

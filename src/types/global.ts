@@ -10,4 +10,13 @@ export interface BookDataType {
   title: string;
   author: string;
   isbn: string;
+  copies: number
+}
+
+export interface bookViewType {
+  id: string;
+  title: string;
+  author: string;
+  isbn: string;
+  copies: number
 }

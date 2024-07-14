@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Drawer, Button, Row, Col, Space, Form, Input } from "antd";
 import DataTable from "../common/DataTable";
-import { DataType } from "../../types/global";
+import { DataType, bookViewType } from "../../types/global";
 import type { TableProps } from "antd";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { fetchBookList } from "../../slices/bookSlice";
@@ -26,13 +26,15 @@ const BooksPage = () => {
   const [title, setTitle] = useState("");
   const [mode, setMode] = useState("");
   const [open, setOpen] = useState(false);
-  const [recordDetails, setRecordDetails] = useState({});
+  const [recordDetails, setRecordDetails] = useState<bookViewType>();
 
-  const showDrawer = (mode: string, record: any) => {
+  const showDrawer = (mode: string, record?: bookViewType) => {
     setTitle(mode);
     setMode(mode);
     setOpen(true);
-    setRecordDetails(record);
+    if(mode === BookMode.VIEW){
+      setRecordDetails(record);
+    }
   };
 
   const onClose = () => {
@@ -45,11 +47,10 @@ const BooksPage = () => {
 
   useEffect(() => {
     console.log("dispatch");
-    // debugger;
     fetchList();
-  }, [fetchList]);
+  }, [fetchList,open]);
 
-  const columns: TableProps<DataType>["columns"] = [
+  const columns: TableProps<bookViewType>["columns"] = [
     {
       title: "Title",
       dataIndex: "title",
@@ -99,7 +100,7 @@ const BooksPage = () => {
       <Row justify="end" style={{ padding: "20px" }}>
         <Col>
           <Button
-            onClick={() => showDrawer(BookMode.CREATE, {})}
+            onClick={() => showDrawer(BookMode.CREATE)}
             type="primary"
           >
             Add Book
@@ -117,9 +118,11 @@ const BooksPage = () => {
         getContainer={false}
       >
         <BookFormPage
+          bookList = {data}
           mode={mode}
           recordDetails={recordDetails}
           closeDrawer={setOpen}
+          isOpen={open}
         />
       </Drawer>
     </>
