@@ -5,7 +5,7 @@ import { Form, Input } from "antd";
 import { BookMode } from "../../constants/constants";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { BookDataType, bookViewType } from "../../types/global";
-import { saveBook } from "../../slices/bookSlice";
+import { saveBook,editBook } from "../../slices/bookSlice";
 
 type Props = {
   mode: string;
@@ -30,7 +30,6 @@ const addBookDefaultValues : addBookFormData = {
 };
 
 const BookFormPage = (props: Props) => {
-  // const data = useAppSelector((state) => state.book.bookList);
   const dispatch = useAppDispatch();
   const { mode, recordDetails, closeDrawer,bookList ,isOpen} = props;
   const [formData, setFormData] = useState<addBookFormData>({
@@ -40,8 +39,6 @@ const BookFormPage = (props: Props) => {
 
 
   useEffect(() => {
-    console.log('use ');
-    
     if(mode === BookMode.VIEW || mode === BookMode.EDIT){
       const viewBook = {
         id: recordDetails?.id,
@@ -60,16 +57,14 @@ const BookFormPage = (props: Props) => {
   const validateFields = async () => {
     try {
       await form.validateFields();
-      console.log("true");
       return true;
     } catch (errorInfo: any) {
       return isEmpty(errorInfo);
     }
   };
 
-  const onsubmit = async () => {
+  const addBook = async () => {
     const isValid = await validateFields();
-    console.log(isValid, "is valid form");
 
     if (isValid) {
       const values = form.getFieldsValue();
@@ -81,11 +76,36 @@ const BookFormPage = (props: Props) => {
         copies : values.copies
       } as BookDataType;
 
-      console.log(newBook, 'new book');
       await dispatch(saveBook(newBook))
       closeDrawer(false)
     }
-    
+  }
+
+  const updateBook = async () => {
+    const isValid = await validateFields();
+
+    if(isValid) {
+      const values = form.getFieldsValue();
+      setFormData(values);
+      const editedBook = {
+        id: recordDetails?.id,
+        title: values.title,
+        author: values.author,
+        isbn: values.isbn,
+        copies : values.copies
+      } as BookDataType;
+
+      await dispatch(editBook(editedBook))
+      closeDrawer(false)
+    }
+  }
+
+  const onsubmit = async () => {
+    if(mode === BookMode.CREATE){
+      await addBook();
+    }else {
+      await updateBook();
+    }
   };
 
   return (

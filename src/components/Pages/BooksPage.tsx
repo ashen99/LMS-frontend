@@ -32,7 +32,7 @@ const BooksPage = () => {
     setTitle(mode);
     setMode(mode);
     setOpen(true);
-    if(mode === BookMode.VIEW){
+    if(mode === BookMode.VIEW || mode === BookMode.EDIT){
       setRecordDetails(record);
     }
   };
@@ -46,7 +46,6 @@ const BooksPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    console.log("dispatch");
     fetchList();
   }, [fetchList,open]);
 

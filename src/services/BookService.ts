@@ -15,3 +15,11 @@ export const saveBook = async (payload: any) => {
     throw error;
   }
 };
+
+export const editBook = async (payload: any) => {
+  try {
+    return await axios.put("http://localhost:8080/v1/books/update-book", payload);
+  } catch (error) {
+    throw error;
+  }
+};

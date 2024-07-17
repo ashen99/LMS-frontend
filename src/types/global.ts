@@ -6,6 +6,7 @@ export interface DataType {
 }
 
 export interface BookDataType {
+  id: string,
   key: string;
   title: string;
   author: string;

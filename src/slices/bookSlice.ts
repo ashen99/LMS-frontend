@@ -57,6 +57,23 @@ const bookSlice = createSlice({
       state.inProgress = false;
       state.error = action.payload;
     },
+    bookEditInProgress: (state) => {
+      state.inProgress = true;
+      state.error = null;
+    },
+    bookEditCompleted: (state, {payload, type}: PayloadAction<any>) => {
+      state.inProgress = false;
+      state.error = null;
+      state.book.author = payload.data.author;
+      state.book.title = payload.data.title;
+      state.book.isbn = payload.data.isbn;
+      state.book.id = payload.data.id;
+      state.book.copies = payload.data.copies;
+    },
+    bookEditCompleteFail: (state,action) => {
+      state.inProgress = false;
+      state.error = action.payload;
+    }
   },
 });
 
@@ -67,6 +84,9 @@ export const {
   bookListFetchInProgress,
   bookListFetchCompelte,
   bookListFetchFail,
+  bookEditInProgress,
+  bookEditCompleted,
+  bookEditCompleteFail
 } = bookSlice.actions;
 
 export const saveBook = (payload: BookDataType) => {
@@ -97,6 +117,26 @@ export const fetchBookList = () => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         dispath(bookListFetchFail(JSON.parse(JSON.stringify(error.response))));
+      }
+    }
+  };
+};
+
+export const editBook = (payload: BookDataType) => {
+  return async (dispatch: Dispatch) => {
+    try {
+      dispatch(bookEditInProgress())
+      console.log(payload)
+      const response = await BookService.editBook(payload);
+      const data = response.data;
+      dispatch(bookEditCompleted({ data: data }));
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        dispatch(
+          bookEditCompleteFail({
+            data: error.response?.data,
+          })
+        );
       }
     }
   };
