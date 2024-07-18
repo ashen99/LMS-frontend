@@ -73,6 +73,18 @@ const bookSlice = createSlice({
     bookEditCompleteFail: (state,action) => {
       state.inProgress = false;
       state.error = action.payload;
+    },
+    deleteBookInProgress: (state) => {
+      state.inProgress = true;
+      state.error = null;
+    },
+    deleteBookComplete: (state, action) => {
+      state.inProgress = false;
+      state.error = null;
+    },
+    deleteBookCompleteFail: (state, action) => {
+      state.inProgress = false;
+      state.error = action.payload;
     }
   },
 });
@@ -86,7 +98,10 @@ export const {
   bookListFetchFail,
   bookEditInProgress,
   bookEditCompleted,
-  bookEditCompleteFail
+  bookEditCompleteFail,
+  deleteBookInProgress,
+  deleteBookComplete,
+  deleteBookCompleteFail
 } = bookSlice.actions;
 
 export const saveBook = (payload: BookDataType) => {
@@ -141,5 +156,23 @@ export const editBook = (payload: BookDataType) => {
     }
   };
 };
+
+export const deleteBook = (id: string) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(deleteBookInProgress());
+    try {
+        const response = await BookService.deleteBook(id);
+        dispatch(deleteBookComplete(response.data));
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        dispatch(
+          deleteBookCompleteFail({
+            data: error.response?.data,
+          })
+        );
+      }
+    }
+  }
+}
 
 export default bookSlice.reducer;

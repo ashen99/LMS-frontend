@@ -23,3 +23,11 @@ export const editBook = async (payload: any) => {
     throw error;
   }
 };
+
+export const deleteBook = async (id: string) => {
+  try {
+    return await axios.delete(`http://localhost:8080/v1/books/remove-book/${id}`);
+  } catch (error) {
+    throw error;
+  }
+}

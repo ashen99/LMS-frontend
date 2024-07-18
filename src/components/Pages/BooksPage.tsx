@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Drawer, Button, Row, Col, Space, Form, Input } from "antd";
+import { Modal } from "antd"; // Add this import
 import DataTable from "../common/DataTable";
 import { DataType, bookViewType } from "../../types/global";
 import type { TableProps } from "antd";
 import { EyeOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { fetchBookList } from "../../slices/bookSlice";
+import { deleteBook, fetchBookList } from "../../slices/bookSlice";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { BookMode } from "../../constants/constants";
 import BookFormPage from "../common/BookForm";
@@ -22,7 +23,6 @@ type FieldType = {
 const BooksPage = () => {
   const dispatch = useAppDispatch();
   const data = useAppSelector((state) => state.book.bookList);
-  const fetchingComplete = useAppSelector((state) => state.book.booksFetched);
   const [title, setTitle] = useState("");
   const [mode, setMode] = useState("");
   const [open, setOpen] = useState(false);
@@ -48,6 +48,27 @@ const BooksPage = () => {
   useEffect(() => {
     fetchList();
   }, [fetchList,open]);
+
+
+  const removeBook = async (id: string) => {
+    await dispatch(deleteBook(id));
+  }
+
+  const showDeleteConfirm = (record: bookViewType) => {
+    Modal.confirm({
+      title: 'Are you sure you want to delete this book?',
+      content: `Title: ${record.title}`,
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk: async () => {
+        // Add your delete logic here
+        console.log('Deleted', record);
+        await removeBook(record.id);
+        fetchList();
+      },
+    });
+  };
 
   const columns: TableProps<bookViewType>["columns"] = [
     {
@@ -85,7 +106,7 @@ const BooksPage = () => {
               >
                 <EditOutlined />
               </span>
-              <span style={{ cursor: "pointer" }}>
+              <span onClick={() => showDeleteConfirm(record)} style={{ cursor: "pointer" }}>
                 <DeleteOutlined />
               </span>
             </Space>
