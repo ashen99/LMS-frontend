@@ -5,7 +5,7 @@ import { Form, Input } from "antd";
 import { BookMode } from "../../constants/constants";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { BookDataType, bookViewType } from "../../types/global";
-import { saveBook,editBook } from "../../slices/bookSlice";
+import { saveBook, editBook } from "../../slices/bookSlice";
 
 type Props = {
   mode: string;
@@ -19,41 +19,39 @@ export type addBookFormData = {
   title: string;
   author: string;
   isbn: string;
-  copies : number;
+  copies: number;
 };
 
-const addBookDefaultValues : addBookFormData = {
-  title : '',
-  author: '',
-  isbn: '',
-  copies : 0
+const addBookDefaultValues: addBookFormData = {
+  title: "",
+  author: "",
+  isbn: "",
+  copies: 0,
 };
 
 const BookFormPage = (props: Props) => {
   const dispatch = useAppDispatch();
-  const { mode, recordDetails, closeDrawer,bookList ,isOpen} = props;
+  const { mode, recordDetails, closeDrawer, bookList, isOpen } = props;
   const [formData, setFormData] = useState<addBookFormData>({
-    ...addBookDefaultValues
+    ...addBookDefaultValues,
   });
   const [form] = Form.useForm();
 
-
   useEffect(() => {
-    if(mode === BookMode.VIEW || mode === BookMode.EDIT){
+    if (mode === BookMode.VIEW || mode === BookMode.EDIT) {
       const viewBook = {
         id: recordDetails?.id,
         title: recordDetails?.title,
         author: recordDetails?.author,
         isbn: recordDetails?.isbn,
-        copies: recordDetails?.copies
+        copies: recordDetails?.copies,
       } as bookViewType;
       form.setFieldsValue(viewBook);
-    } else if(mode === BookMode.CREATE) {
-      form.resetFields()
+    } else if (mode === BookMode.CREATE) {
+      form.resetFields();
     }
-  }, [isOpen])
-  
-  
+  }, [isOpen]);
+
   const validateFields = async () => {
     try {
       await form.validateFields();
@@ -73,18 +71,18 @@ const BookFormPage = (props: Props) => {
         title: values.title,
         author: values.author,
         isbn: values.isbn,
-        copies : values.copies
+        copies: values.copies,
       } as BookDataType;
 
-      await dispatch(saveBook(newBook))
-      closeDrawer(false)
+      await dispatch(saveBook(newBook));
+      closeDrawer(false);
     }
-  }
+  };
 
   const updateBook = async () => {
     const isValid = await validateFields();
 
-    if(isValid) {
+    if (isValid) {
       const values = form.getFieldsValue();
       setFormData(values);
       const editedBook = {
@@ -92,18 +90,18 @@ const BookFormPage = (props: Props) => {
         title: values.title,
         author: values.author,
         isbn: values.isbn,
-        copies : values.copies
+        copies: values.copies,
       } as BookDataType;
 
-      await dispatch(editBook(editedBook))
-      closeDrawer(false)
+      await dispatch(editBook(editedBook));
+      closeDrawer(false);
     }
-  }
+  };
 
   const onsubmit = async () => {
-    if(mode === BookMode.CREATE){
+    if (mode === BookMode.CREATE) {
       await addBook();
-    }else {
+    } else {
       await updateBook();
     }
   };
@@ -130,7 +128,7 @@ const BookFormPage = (props: Props) => {
               <Form.Item
                 label="id"
                 name="id"
-                rules={[{ required: true, message: "Please Enter a Title" }]}
+                rules={[{ required: true, message: "Please Enter a id" }]}
               >
                 <Input disabled={true} />
               </Form.Item>
@@ -156,6 +154,10 @@ const BookFormPage = (props: Props) => {
               name="isbn"
               rules={[
                 { required: true, message: "Please enter the ISBN number." },
+                {
+                  pattern: /^(97(8|9))?\d{9}(\d|X)$/,
+                  message: "Please enter a valid ISBN number.",
+                },
               ]}
             >
               <Input />
@@ -164,7 +166,10 @@ const BookFormPage = (props: Props) => {
               label="copies"
               name="copies"
               rules={[
-                { required: true, message: "Please enter the number of copies." },
+                {
+                  required: true,
+                  message: "Please enter the number of copies.",
+                },
               ]}
             >
               <Input />
